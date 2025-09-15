@@ -24,7 +24,7 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle auth errors
+// Response interceptor to handle auth errors and extract API error messages
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -33,6 +33,13 @@ api.interceptors.response.use(
       Cookies.remove('auth-token');
       window.location.href = '/login';
     }
+    
+    // Extract API error message from response
+    if (error.response?.data?.error) {
+      const apiError = new Error(error.response.data.error);
+      return Promise.reject(apiError);
+    }
+    
     return Promise.reject(error);
   }
 );

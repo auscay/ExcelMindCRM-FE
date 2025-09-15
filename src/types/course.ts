@@ -1,30 +1,42 @@
 export interface Course {
-  id: string;
+  id: number;
   title: string;
   description?: string;
+  code: string;
   credits: number;
-  lecturerId: string;
+  maxStudents: number;
+  status: 'draft' | 'published' | 'archived';
+  lecturerId: number;
   lecturer?: {
-    id: string;
+    id: number;
     firstName: string;
     lastName: string;
   };
+  syllabusUrl?: string;
+  syllabusFileName?: string;
   syllabus?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface Enrollment {
-  id: string;
-  courseId: string;
-  studentId: string;
+  id: number;
+  courseId: number;
+  studentId: number;
   status: 'pending' | 'approved' | 'rejected';
+  notes?: string;
+  approvedBy?: number;
   course?: Course;
   student?: {
-    id: string;
+    id: number;
     firstName: string;
     lastName: string;
     email: string;
+  };
+  approver?: {
+    id: number;
+    firstName: string;
+    lastName: string;
   };
   createdAt: string;
   updatedAt: string;
