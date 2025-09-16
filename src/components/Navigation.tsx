@@ -12,7 +12,8 @@ import {
   BarChart3, 
   LogOut,
   Menu,
-  X 
+  X,
+  ClipboardList
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -40,12 +41,14 @@ export default function Navigation() {
         return [
           ...baseItems,
           { name: 'Courses', href: '/courses', icon: BookOpen },
+          { name: 'Assignments', href: '/assignments', icon: ClipboardList },
         ];
       
       case 'lecturer':
         return [
           ...baseItems,
           { name: 'My Courses', href: '/courses', icon: BookOpen },
+          { name: 'Assignments', href: '/assignments', icon: ClipboardList },
         ];
       
       case 'admin':
