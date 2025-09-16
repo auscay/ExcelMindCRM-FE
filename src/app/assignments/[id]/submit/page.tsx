@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, FileText } from 'lucide-react';
@@ -20,21 +20,7 @@ export default function AssignmentSubmitPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!isAuthenticated || !user) {
-      router.push('/login');
-      return;
-    }
-
-    if (user.role !== 'student') {
-      router.push('/dashboard');
-      return;
-    }
-
-    loadAssignmentData();
-  }, [isAuthenticated, user, assignmentId]);
-
-  const loadAssignmentData = async () => {
+  const loadAssignmentData = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -55,12 +41,26 @@ export default function AssignmentSubmitPage() {
       
       setAssignment(assignmentData);
       setSubmission(submissionData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load assignment');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to load assignment');
     } finally {
       setLoading(false);
     }
-  };
+  }, [assignmentId, user]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      router.push('/login');
+      return;
+    }
+
+    if (user.role !== 'student') {
+      router.push('/dashboard');
+      return;
+    }
+
+    loadAssignmentData();
+  }, [isAuthenticated, user, assignmentId, loadAssignmentData, router]);
 
   const handleSubmitAssignment = async (data: SubmitAssignmentData) => {
     setSubmitting(true);
@@ -71,8 +71,8 @@ export default function AssignmentSubmitPage() {
       setSubmission(newSubmission);
       // Show success message or redirect
       router.push('/assignments');
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit assignment');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to submit assignment');
     } finally {
       setSubmitting(false);
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { courseService } from '@/lib/courseService';
@@ -8,7 +8,7 @@ import { Course } from '@/types/course';
 import CourseCard from '@/components/CourseCard';
 import CourseForm from '@/components/CourseForm';
 import FileUpload from '@/components/FileUpload';
-import { Plus, Search, Filter } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 
 export default function CoursesPage() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -24,26 +24,7 @@ export default function CoursesPage() {
   const [uploadCourseId, setUploadCourseId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-
-    if (isAuthenticated && user) {
-      loadCourses();
-    }
-  }, [loading, isAuthenticated, user, router]);
-
-  useEffect(() => {
-    const filtered = courses.filter(course =>
-      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredCourses(filtered);
-  }, [courses, searchTerm]);
-
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async () => {
     if (!user) return;
     
     setIsLoading(true);
@@ -59,26 +40,45 @@ export default function CoursesPage() {
       }
       
       setCourses(coursesData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to load courses. Please try again.');
       console.error('Error loading courses:', err);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
 
-  const handleCreateCourse = async (courseData: any) => {
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+
+    if (isAuthenticated && user) {
+      loadCourses();
+    }
+  }, [loading, isAuthenticated, user, router, loadCourses]);
+
+  useEffect(() => {
+    const filtered = courses.filter(course =>
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredCourses(filtered);
+  }, [courses, searchTerm]);
+
+  const handleCreateCourse = async (courseData: { title: string; code: string; credits: number; maxStudents: number; description?: string; status?: 'draft' | 'published' | 'archived' }) => {
     try {
       await courseService.createCourse(courseData);
       setShowCourseForm(false);
       loadCourses();
-    } catch (err: any) {
-      setError(err.message || 'Failed to create course. Please try again.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to create course. Please try again.');
       console.error('Error creating course:', err);
     }
   };
 
-  const handleUpdateCourse = async (courseData: any) => {
+  const handleUpdateCourse = async (courseData: { title: string; code: string; credits: number; maxStudents: number; description?: string; status?: 'draft' | 'published' | 'archived' }) => {
     if (!editingCourse) return;
     
     try {
@@ -86,8 +86,8 @@ export default function CoursesPage() {
       setEditingCourse(null);
       setShowCourseForm(false);
       loadCourses();
-    } catch (err: any) {
-      setError(err.message || 'Failed to update course. Please try again.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to update course. Please try again.');
       console.error('Error updating course:', err);
     }
   };
@@ -98,8 +98,8 @@ export default function CoursesPage() {
     try {
       await courseService.deleteCourse(courseId.toString());
       loadCourses();
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete course. Please try again.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to delete course. Please try again.');
       console.error('Error deleting course:', err);
     }
   };
@@ -108,8 +108,8 @@ export default function CoursesPage() {
     try {
       await courseService.enrollInCourse(courseId.toString());
       loadCourses();
-    } catch (err: any) {
-      setError(err.message || 'Failed to enroll in course. Please try again.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to enroll in course. Please try again.');
       console.error('Error enrolling in course:', err);
     }
   };
@@ -120,8 +120,8 @@ export default function CoursesPage() {
     try {
       await courseService.dropCourse(courseId.toString());
       loadCourses();
-    } catch (err: any) {
-      setError(err.message || 'Failed to drop course. Please try again.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to drop course. Please try again.');
       console.error('Error dropping course:', err);
     }
   };
@@ -139,8 +139,8 @@ export default function CoursesPage() {
       setShowFileUpload(false);
       setUploadCourseId(null);
       loadCourses();
-    } catch (err: any) {
-      setError(err.message || 'Failed to upload syllabus. Please try again.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to upload syllabus. Please try again.');
       console.error('Error uploading syllabus:', err);
     }
   };

@@ -49,7 +49,7 @@ export default function EnrollmentsPage() {
     try {
       const enrollmentsData = await courseService.getEnrollments();
       setEnrollments(enrollmentsData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to load enrollments. Please try again.');
       console.error('Error loading enrollments:', err);
     } finally {
@@ -61,7 +61,7 @@ export default function EnrollmentsPage() {
     try {
       await courseService.updateEnrollmentStatus(enrollmentId, 'approved');
       loadEnrollments();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to approve enrollment. Please try again.');
       console.error('Error approving enrollment:', err);
     }
@@ -71,7 +71,7 @@ export default function EnrollmentsPage() {
     try {
       await courseService.updateEnrollmentStatus(enrollmentId, 'rejected');
       loadEnrollments();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to reject enrollment. Please try again.');
       console.error('Error rejecting enrollment:', err);
     }
@@ -166,7 +166,7 @@ export default function EnrollmentsPage() {
             </div>
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
+              onChange={(e) => setStatusFilter(e.target.value as 'all' | 'pending' | 'approved' | 'rejected')}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="all">All ({statusCounts.total})</option>

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Calendar, FileText, Upload, Clock, CheckCircle, AlertCircle, User } from 'lucide-react';
+import { Calendar, FileText, Clock, CheckCircle, AlertCircle, User } from 'lucide-react';
 import { Assignment, AssignmentSubmission } from '@/types/assignment';
 
 interface AssignmentCardProps {
@@ -20,8 +20,7 @@ export default function AssignmentCard({
   userRole,
   onView,
   onEdit,
-  onDelete,
-  onGrade
+  onDelete
 }: AssignmentCardProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

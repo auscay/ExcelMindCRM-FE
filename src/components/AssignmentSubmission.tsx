@@ -40,7 +40,6 @@ export default function AssignmentSubmissionComponent({
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     setValue,
   } = useForm<SubmissionFormData>({
     resolver: zodResolver(submissionSchema),

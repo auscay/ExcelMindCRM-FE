@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (token) {
         try {
           const userData = await authService.getProfile();
-          setUser(userData);
+          setUser(userData as User);
         } catch (error) {
           console.error('Failed to get user profile:', error);
           Cookies.remove('auth-token');

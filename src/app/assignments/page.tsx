@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Filter, Calendar, FileText } from 'lucide-react';
+import { Plus, Search, Filter, FileText } from 'lucide-react';
 import AssignmentCard from '@/components/AssignmentCard';
 import AssignmentForm from '@/components/AssignmentForm';
 import { Assignment, AssignmentSubmission, CreateAssignmentData } from '@/types/assignment';
@@ -25,21 +25,7 @@ export default function AssignmentsPage() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-
-    if (user?.role === 'admin') {
-      router.push('/dashboard');
-      return;
-    }
-
-    loadData();
-  }, [isAuthenticated, user]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!user) return;
     
     setLoading(true);
@@ -81,20 +67,34 @@ export default function AssignmentsPage() {
         setAssignments(assignmentsData);
         setSubmissions(submissionsData);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to load assignments');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to load assignments');
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+
+    if (user?.role === 'admin') {
+      router.push('/dashboard');
+      return;
+    }
+
+    loadData();
+  }, [isAuthenticated, user, loadData, router]);
 
   const handleCreateAssignment = async (data: CreateAssignmentData) => {
     try {
       await assignmentService.createAssignment(data);
       setShowForm(false);
       loadData(); // Reload assignments
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to create assignment');
+    } catch (err: unknown) {
+      throw new Error((err as Error).message || 'Failed to create assignment');
     }
   };
 
@@ -105,8 +105,8 @@ export default function AssignmentsPage() {
       await assignmentService.updateAssignment(editingAssignment.id.toString(), data);
       setEditingAssignment(null);
       loadData(); // Reload assignments
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to update assignment');
+    } catch (err: unknown) {
+      throw new Error((err as Error).message || 'Failed to update assignment');
     }
   };
 
@@ -116,8 +116,8 @@ export default function AssignmentsPage() {
     try {
       await assignmentService.deleteAssignment(assignment.id.toString());
       loadData(); // Reload assignments
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete assignment');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to delete assignment');
     }
   };
 

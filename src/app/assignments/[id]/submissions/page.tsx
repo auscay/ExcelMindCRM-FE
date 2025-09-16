@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Users, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react';
@@ -21,21 +21,7 @@ export default function AssignmentSubmissionsPage() {
   const [grading, setGrading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!isAuthenticated || !user) {
-      router.push('/login');
-      return;
-    }
-
-    if (user.role !== 'lecturer') {
-      router.push('/dashboard');
-      return;
-    }
-
-    loadSubmissionsData();
-  }, [isAuthenticated, user, assignmentId]);
-
-  const loadSubmissionsData = async () => {
+  const loadSubmissionsData = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -59,12 +45,26 @@ export default function AssignmentSubmissionsPage() {
           updatedAt: new Date().toISOString(),
         } as Assignment);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to load submissions');
+    } catch (err: unknown) {
+      setError((err as Error) .message || 'Failed to load submissions');
     } finally {
       setLoading(false);
     }
-  };
+  }, [assignmentId]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      router.push('/login');
+      return;
+    }
+
+    if (user.role !== 'lecturer') {
+      router.push('/dashboard');
+      return;
+    }
+
+    loadSubmissionsData();
+  }, [isAuthenticated, user, assignmentId, loadSubmissionsData, router]);
 
   const handleGradeSubmission = async (data: { submissionId: number; grade: number; feedback?: string }) => {
     setGrading(true);
@@ -75,8 +75,8 @@ export default function AssignmentSubmissionsPage() {
       // Reload submissions to get updated data
       await loadSubmissionsData();
       setSelectedSubmission(null);
-    } catch (err: any) {
-      setError(err.message || 'Failed to grade submission');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to grade submission');
     } finally {
       setGrading(false);
     }
