@@ -49,7 +49,7 @@ export default function AssignmentSubmissionComponent({
     } : undefined,
   });
 
-  const textSubmission = watch('textSubmission');
+  // const textSubmission = watch('textSubmission');
   const isSubmitted = existingSubmission?.status === 'submitted' || existingSubmission?.status === 'graded';
   const isGraded = existingSubmission?.status === 'graded';
 
@@ -70,8 +70,8 @@ export default function AssignmentSubmissionComponent({
         file: data.file,
       };
       await onSubmit(submitData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit assignment');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to submit assignment');
     }
   };
 

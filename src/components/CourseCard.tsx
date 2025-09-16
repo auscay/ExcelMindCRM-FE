@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Course } from '@/types/course';
-import { BookOpen, User, Calendar, FileText, Star } from 'lucide-react';
+import { BookOpen, User, Calendar, FileText } from 'lucide-react';
 
 interface CourseCardProps {
   course: Course;

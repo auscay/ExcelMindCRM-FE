@@ -26,7 +26,7 @@ export const authService = {
     await api.post('/auth/logout');
   },
 
-  async getProfile(): Promise<any> {
+  async getProfile(): Promise<unknown> {
     const response = await api.get('/auth/profile');
     return response.data;
   }
