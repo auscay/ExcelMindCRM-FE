@@ -4,11 +4,11 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { GraduationCap, BookOpen, Users, BarChart3, LogOut, FileText } from 'lucide-react';
+import { GraduationCap, BookOpen, Users, BarChart3, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
-  const { user, logout, loading, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -17,10 +17,10 @@ export default function DashboardPage() {
     }
   }, [loading, isAuthenticated, router]);
 
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
+  // const handleLogout = () => {
+  //   logout();
+  //   router.push('/login');
+  // };
 
   if (loading) {
     return (

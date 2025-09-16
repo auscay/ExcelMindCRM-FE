@@ -103,7 +103,7 @@ export default function EnrollmentCard({
       {enrollment.status === 'pending' && (
         <div className="flex space-x-2">
           <button
-            onClick={() => onApprove(enrollment.id)}
+            onClick={() => onApprove(enrollment.id.toString())}
             disabled={isLoading}
             className="flex-1 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
@@ -117,7 +117,7 @@ export default function EnrollmentCard({
             )}
           </button>
           <button
-            onClick={() => onReject(enrollment.id)}
+            onClick={() => onReject(enrollment.id.toString())}
             disabled={isLoading}
             className="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >

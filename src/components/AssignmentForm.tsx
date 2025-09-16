@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Calendar, FileText, Upload, Save, X } from 'lucide-react';
+import { Calendar, FileText, Save, X } from 'lucide-react';
 import { CreateAssignmentData, Assignment } from '@/types/assignment';
 import { Course } from '@/types/course';
 
@@ -62,8 +62,8 @@ export default function AssignmentForm({
     setError(null);
     try {
       await onSubmit(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to save assignment');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to save assignment');
     }
   };
 

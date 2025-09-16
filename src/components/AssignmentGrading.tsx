@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CheckCircle, Clock, FileText, Download, Save, User, Calendar } from 'lucide-react';
+import { CheckCircle, FileText, Download, Save, User, Calendar } from 'lucide-react';
 import { AssignmentSubmission, GradeAssignmentData } from '@/types/assignment';
 
 const gradingSchema = z.object({
@@ -53,8 +53,8 @@ export default function AssignmentGrading({
         feedback: data.feedback?.trim() || undefined,
       };
       await onGrade(gradeData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to grade assignment');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to grade assignment');
     }
   };
 

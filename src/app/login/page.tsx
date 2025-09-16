@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
-import { LoginCredentials } from '@/types/auth';
 import { Mail, Lock, Eye, EyeOff, GraduationCap } from 'lucide-react';
 
 const loginSchema = z.object({
@@ -40,8 +39,8 @@ export default function LoginPage() {
     try {
       await login(data);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } catch (err: unknown) {
+      setError((err as Error & { response?: { data?: { message?: string } } }).response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -147,7 +146,7 @@ export default function LoginPage() {
             {/* Register Link */}
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link
                   href="/register"
                   className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
